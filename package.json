@@ -1,0 +1,20 @@
+{
+  "name": "cat-galleryapi",
+  "version": "1.0.0",
+  "description": "Este proyecto es un sitio web donde se muestra una galería de imágenes de gatos las cuales son traídas a través de una API con comunicación SPA. También el usuario puede guardas imágenes o eliminarlas.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Maeno323/cat-galleryAPI.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Maeno323/cat-galleryAPI/issues"
+  },
+  "homepage": "https://github.com/Maeno323/cat-galleryAPI#readme"
+}

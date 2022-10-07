@@ -16,7 +16,7 @@ let data;
 
 /*API variables*/
 
-const API = "https://api.thecatapi.com/v1/images/search?limit=3&page=2&api_key=";
+const API = "https://api.thecatapi.com/v1/images/search?limit=4&api_key=";
 const APIFavorite = "https://api.thecatapi.com/v1/favourites?api_key=";
 const API_key ="live_swlCiQ2zrjigeFch1ZiFXdEQyNIU7wWze8fQxpSLVPRKXHWktuQ9Y9Zq18yUQgRL";
 const API_keyFavorite ="?api_key=live_swlCiQ2zrjigeFch1ZiFXdEQyNIU7wWze8fQxpSLVPRKXHWktuQ9Y9Zq18yUQgRL";
@@ -111,37 +111,43 @@ function selectImgRandom(event){
 }
 
 async function saveFavorite(){
-    console.log("entró")
+   
     try{
-        //Se comienzan 
-        if(selectedImgFavorite.length){
-            for (const item of data) {
-                if(item.id === selectedImgFavorite[0].id){
-                    const response = await fetch(APIFavorite+API_key, {
-                        method : "POST",
-                        mode: "cors",
-                        headers:{
-                            "Content-Type" : "application/json"
-                        },
-                        body:JSON.stringify({image_id : selectedImgFavorite[0].id})
-                    });
-                    let dataSent = await response.json();
-                    console.log(dataSent);
-                    console.log(response);
-                    console.log("gato mandado a guardar", item);
-                    span.innerText = dataSent.message;
-                    
-                }         
-            }  
-            showFavorite(); 
-            //La imagen que se solicitó guardar en favoritos debe ser des-seleccionada y sacada de la lista
-            selectedImgFavorite[0].classList.toggle("show-random-container__img--selected");
-             
+        const replaceImg = document.querySelectorAll(".show-favorites-container article img");
+        if(replaceImg.length >= 6){
+            console.log("más de 6")
+            span.innerText = "You can only save six cats";
         }
         else{
-            span.innerText = "You must select a cat to send";
+            console.log("Está trolleando")
+            if(selectedImgFavorite.length){
+                for (const item of data) {
+                    if(item.id === selectedImgFavorite[0].id){
+                        const response = await fetch(APIFavorite+API_key, {
+                            method : "POST",
+                            mode: "cors",
+                            headers:{
+                                "Content-Type" : "application/json"
+                            },
+                            body:JSON.stringify({image_id : selectedImgFavorite[0].id})
+                        });
+                        let dataSent = await response.json();
+                        console.log(dataSent);
+                        console.log(response);
+                        console.log("gato mandado a guardar", item);
+                        span.innerText = dataSent.message;
+                        
+                    }         
+                }  
+                showFavorite(); 
+                //La imagen que se solicitó guardar en favoritos debe ser des-seleccionada y sacada de la lista
+                selectedImgFavorite[0].classList.toggle("show-random-container__img--selected");
+                 
+            }
+            else{
+                span.innerText = "You must select a cat to send";
+            }   
         }
-        
     }
     catch(e){
         console.log(e);

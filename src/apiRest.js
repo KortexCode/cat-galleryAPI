@@ -16,11 +16,10 @@ let data;
 
 /*API variables*/
 
-const API = "https://api.thecatapi.com/v1/images/search?limit=4&api_key=";
-const APIFavorite = "https://api.thecatapi.com/v1/favourites?api_key=";
-const API_key ="live_swlCiQ2zrjigeFch1ZiFXdEQyNIU7wWze8fQxpSLVPRKXHWktuQ9Y9Zq18yUQgRL";
-const API_keyFavorite ="?api_key=live_swlCiQ2zrjigeFch1ZiFXdEQyNIU7wWze8fQxpSLVPRKXHWktuQ9Y9Zq18yUQgRL";
+const API = "https://api.thecatapi.com/v1/images/search?limit=4";
+const APIFavorite = "https://api.thecatapi.com/v1/favourites";
 const APIFavoriteDelete = "https://api.thecatapi.com/v1/favourites/";
+const API_key ="live_swlCiQ2zrjigeFch1ZiFXdEQyNIU7wWze8fQxpSLVPRKXHWktuQ9Y9Zq18yUQgRL";
 
 
 async function showCatPicture(){
@@ -30,7 +29,7 @@ async function showCatPicture(){
     btnSaveFavorite.onclick = () => saveFavorite();
     /* buttonRemove.classList.toggle("button--disabled"); */
     try{
-        const response = await fetch(API+API_key);
+        const response = await fetch(API);
         data = await response.json();
         btnSaveFavorite.classList.replace("button--disabled", "button--enabled");
         console.log("gatos cargados")
@@ -123,11 +122,12 @@ async function saveFavorite(){
             if(selectedImgFavorite.length){
                 for (const item of data) {
                     if(item.id === selectedImgFavorite[0].id){
-                        const response = await fetch(APIFavorite+API_key, {
+                        const response = await fetch(APIFavorite, {
                             method : "POST",
                             mode: "cors",
                             headers:{
-                                "Content-Type" : "application/json"
+                                "Content-Type" : "application/json",
+                                "X-API-KEY": "live_swlCiQ2zrjigeFch1ZiFXdEQyNIU7wWze8fQxpSLVPRKXHWktuQ9Y9Zq18yUQgRL",
                             },
                             body:JSON.stringify({image_id : selectedImgFavorite[0].id})
                         });
@@ -158,7 +158,12 @@ async function saveFavorite(){
 async function showFavorite(){
     try{
         const fragment = new DocumentFragment();
-        const response = await fetch(APIFavorite+API_key);  
+        const response = await fetch(APIFavorite, {
+            method: "GET",
+            headers: {
+                "X-API-KEY": "live_swlCiQ2zrjigeFch1ZiFXdEQyNIU7wWze8fQxpSLVPRKXHWktuQ9Y9Zq18yUQgRL", 
+            }
+        });  
         let dataQuery = await response.json();
         console.log("gatos traido para el show", dataQuery)
 
@@ -241,9 +246,12 @@ async function deleteFavorite(){
         replaceImg = document.querySelectorAll(".show-favorites-container article img");
         //Se comienzan 
         if(selectedImgFavorite.length){
-            const response = await fetch(APIFavoriteDelete+selectedImgFavorite[0].id+API_keyFavorite, {
+            const response = await fetch(APIFavoriteDelete+selectedImgFavorite[0].id, {
                 method : "DELETE",
                 mode : "cors", 
+                headers: {
+                    "X-API-KEY": "live_swlCiQ2zrjigeFch1ZiFXdEQyNIU7wWze8fQxpSLVPRKXHWktuQ9Y9Zq18yUQgRL",
+                }
             });
             let dataSent = await response.json();
             console.log(dataSent.message);

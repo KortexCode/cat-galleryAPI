@@ -24,17 +24,69 @@ button{
     border: 2px solid black;
     border-radius: 4px;
 }
+.upload-aside{
+    position: fixed;
+    top:0;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    width: 550px;
+    height: 200px;
+    border-radius: 8px;
+    background-color: rgba(36, 36, 33, 0.938);   
+    box-shadow:  5px 5px 7px 0 #000000;
+}
+.upload-aside p{
+    margin-bottom: 10px;
+    font-size: 20px;
+    font-weight: 700;
+    text-align: center;
+    color: rgb(250, 244, 244);
+    
+}
+.close-menu:hover{
+    cursor: pointer;
+}
+.upload-aside__content{
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    height: auto;  
+    padding-bottom: 20px;
+}
+#upload-Img{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 10px;
+    
+}
+#file{
+    color: white;
+}
+#upload-Img button{
+   align-self: start;
+}
+#img-view-container{
+    width: 150px;
+    height: auto;
+}
+#img-view-container img{
+    width: 120px;
+    height: 120px;
+}
+
 h1{
     text-align: center;
 }
+
 .query-button-container{
     display: flex;
     justify-content: center;
     margin-top: 20px;
 }
-div{
-    margin-bottom: 20px;
-}
+
 div .query-button{
     padding: 5px;
     border: 2px solid black;
@@ -55,6 +107,10 @@ div .query-button{
     background-color: rgb(0, 0, 0, 0.1);
     text-align: center;
  
+}
+.random-cats-container__buttons{
+    display: flex;
+    justify-content: space-evenly;
 }
 .random-cats-container__title{
     

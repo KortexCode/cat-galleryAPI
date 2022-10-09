@@ -10,6 +10,7 @@ const randomSection = document.querySelector(".show-random-container");
 const favoriteSection = document.querySelector(".show-favorites-container");
 //Select img to favorites
 const selectedImgFavorite = [];
+const uploadImgSend = [];
 
 /* global queary variable */
 let data;
@@ -20,10 +21,13 @@ const API = "https://api.thecatapi.com/v1/images/search?limit=4";
 const APIFavorite = "https://api.thecatapi.com/v1/favourites";
 const APIFavoriteDelete = "https://api.thecatapi.com/v1/favourites/";
 const API_key ="live_swlCiQ2zrjigeFch1ZiFXdEQyNIU7wWze8fQxpSLVPRKXHWktuQ9Y9Zq18yUQgRL";
+const API_upload = "https://api.thecatapi.com/v1/images/upload";
 
 
 async function showCatPicture(){
     const btnSaveFavorite = document.getElementById("saveFavorite");
+    const btnUpload = document.getElementById("upload-button");
+    btnUpload.addEventListener("click", openUploadMenu);
 
     //Se crea agrega un evento al botón para ejecutar la acción de guardar favoritos
     btnSaveFavorite.onclick = () => saveFavorite();
@@ -32,6 +36,7 @@ async function showCatPicture(){
         const response = await fetch(API);
         data = await response.json();
         btnSaveFavorite.classList.replace("button--disabled", "button--enabled");
+        btnUpload.classList.replace("button--disabled", "button--enabled");
         console.log("gatos cargados")
         console.log(data);
         
@@ -109,8 +114,52 @@ function selectImgRandom(event){
    
 }
 
+async function uploadImg(){
+    try{
+        const img = document.createElement("img");
+        const form = document.getElementById("upload-Img");
+        const dataForm = new FormData(form);
+        console.log("archivo subido", dataForm.get("file"));
+        const response = await fetch(API_upload, {
+            method: "POST",
+            headers: {
+                /* "Content-Type": "multipart/form-data", */
+                "X-API-KEY" : API_key,     
+            },
+            body: dataForm, 
+        });
+        const dataUpload = await response.json();
+        console.log("pudo subirla", dataUpload);
+        img.id = dataUpload.id;
+        uploadImgSend[0] = img;
+        selectedImgFavorite.push(img);
+        console.log(uploadImgSend);
+        saveFavorite();
+    }
+    catch(e){
+        console.log(e);
+    }
+}
+
+document.getElementById("file").onchange = function (e) {
+    console.log("evento", e);
+    let reader = new FileReader();
+    reader.readAsDataURL(e.target.files[0]);
+    reader.onload = function(){
+       
+        let preview = document.getElementById("img-view-container"),
+        image = document.createElement("img");
+        image.classList.add("img-view-container__img");
+        image.src = reader.result;
+        preview.innerHTML = "";
+        preview.append(image);
+    }
+
+    
+};
+
 async function saveFavorite(){
-   
+  
     try{
         const replaceImg = document.querySelectorAll(".show-favorites-container article img");
         if(replaceImg.length >= 6){
@@ -118,10 +167,10 @@ async function saveFavorite(){
             span.innerText = "You can only save six cats";
         }
         else{
-            console.log("Está trolleando")
+           
             if(selectedImgFavorite.length){
                 for (const item of data) {
-                    if(item.id === selectedImgFavorite[0].id){
+                    if((item.id === selectedImgFavorite[0].id)|| uploadImgSend[0] ){
                         const response = await fetch(APIFavorite, {
                             method : "POST",
                             mode: "cors",
@@ -132,6 +181,7 @@ async function saveFavorite(){
                             body:JSON.stringify({image_id : selectedImgFavorite[0].id})
                         });
                         let dataSent = await response.json();
+                        uploadImgSend[0] = 0;
                         console.log(dataSent);
                         console.log(response);
                         console.log("gato mandado a guardar", item);
@@ -186,6 +236,7 @@ async function showFavorite(){
                     console.log("Como quedó luego de eliminar", replaceImg);
                 }
             });
+           
             selectedImgFavorite.shift(); 
             //Mostrar al agregar un gato
             dataQuery.forEach((item, index) => {
@@ -250,7 +301,7 @@ async function deleteFavorite(){
                 method : "DELETE",
                 mode : "cors", 
                 headers: {
-                    "X-API-KEY": "live_swlCiQ2zrjigeFch1ZiFXdEQyNIU7wWze8fQxpSLVPRKXHWktuQ9Y9Zq18yUQgRL",
+                    "X-API-KEY": API_key,
                 }
             });
             let dataSent = await response.json();
@@ -269,6 +320,18 @@ async function deleteFavorite(){
         span.innerText = "error occurred "+e;
     }
 }
+function openUploadMenu(){
+    console.log("abre menu")
+    const menu = document.querySelector(".upload-aside");
+    menu.classList.toggle("button--disabled");
+    const closeUploadMenu = document.querySelector(".close-menu");
+    closeUploadMenu.addEventListener("click", closeMenu);
+}
+function closeMenu(){
+    const menu = document.querySelector(".upload-aside");
+    menu.classList.toggle("button--disabled");
+}
+
 showCatPicture()
 showFavorite();
 

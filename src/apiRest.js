@@ -2,15 +2,15 @@
 /*span error */
 const span = document.getElementById("error");
 /*Spawn button */
-const button = document.querySelector("div button");
-button.addEventListener("click", showCatPicture);
+const button = document.querySelector(".query-button"); 
+button.addEventListener("click", showCatPicture); //genera una búsqueda nueva de gatos
 /*Spawn cats container*/
 const randomSection = document.querySelector(".show-random-container");
 /*Favorite cats container*/
 const favoriteSection = document.querySelector(".show-favorites-container");
 //Select img to favorites
-const selectedImgFavorite = [];
-const uploadImgSend = [];
+const selectedImgFavorite = [];//Guarda imágenes seleccionadas
+const uploadImgSend = []; //Guarda la imágen subida 
 
 /* global queary variable */
 let data;
@@ -23,7 +23,7 @@ const APIFavoriteDelete = "https://api.thecatapi.com/v1/favourites/";
 const API_key ="live_swlCiQ2zrjigeFch1ZiFXdEQyNIU7wWze8fQxpSLVPRKXHWktuQ9Y9Zq18yUQgRL";
 const API_upload = "https://api.thecatapi.com/v1/images/upload";
 
-
+//Aquí se muestran las imágenes de gatos consultados a la API
 async function showCatPicture(){
     const btnSaveFavorite = document.getElementById("saveFavorite");
     const btnUpload = document.getElementById("upload-button");
@@ -31,14 +31,12 @@ async function showCatPicture(){
 
     //Se crea agrega un evento al botón para ejecutar la acción de guardar favoritos
     btnSaveFavorite.onclick = () => saveFavorite();
-    /* buttonRemove.classList.toggle("button--disabled"); */
+
     try{
         const response = await fetch(API);
         data = await response.json();
         btnSaveFavorite.classList.replace("button--disabled", "button--enabled");
         btnUpload.classList.replace("button--disabled", "button--enabled");
-        console.log("gatos cargados")
-        console.log(data);
         
         //Si ya hay imágenes de gatos cargadas las reemplazará por otras
         if(randomSection.childNodes.length > 1){
@@ -50,7 +48,6 @@ async function showCatPicture(){
             data.forEach((element, index) => {               
                 replaceImgId[index].src = element.url;
                 replaceImgId[index].id = element.id;
-                console.log("reemplazo", replaceImgId);
             });
                 
         }
@@ -60,7 +57,7 @@ async function showCatPicture(){
             for(const item of data){
                 //Elemet creation
                 const article = document.createElement("article");
-                article.addEventListener("click", selectImgRandom);
+                article.addEventListener("click", selectImgRandom); //click a los artículos genera evento de selección
                 const img = document.createElement("img");
                 //Add nodes and attributes
                 img.src = item.url;
@@ -75,19 +72,18 @@ async function showCatPicture(){
         span.innerText = e;
     }
 }
-//Seleccionamos las imágenes a las que demos click
+//función donde se seleccionan las imágenes a las que demos click
 function selectImgRandom(event){
+    //Si hay una imagen seleccionada
     if(selectedImgFavorite.length){
 
         const imgAdded = event.path[0];
         //Valida si la nueva imagen seleccionada concuerda con la selección actual o no
         if( selectedImgFavorite[0].src === imgAdded.src){
-            console.log("entre despues1");
             //Si ya existe una imagen seleccionada será eliminada del array
             selectedImgFavorite.shift();
             //Eliminamos el marco de selección actual
             imgAdded.classList.toggle("show-random-container__img--selected");  
-            console.log( selectedImgFavorite);
         }
         else{
             selectedImgFavorite[0].classList.toggle("show-random-container__img--selected");
@@ -95,21 +91,18 @@ function selectImgRandom(event){
             //Agregamos al array nuestras imágenes seleccionadas
             selectedImgFavorite.push(imgAdded);
             imgAdded.classList.toggle("show-random-container__img--selected");
-            console.log("gato seleccionado", selectedImgFavorite[0])
         }
 
     }
+    //Si no hay imagen seleccionada
     else{
-        console.log("Primera elección")
         //Guardamos la imagen seleccionada
         const imgAdded = event.path[0];
         console.log(imgAdded);
         //Agregamos la clase que pone el marco de selección al darle click
         imgAdded.classList.toggle("show-random-container__img--selected");    
         //Agregamos al array nuestra imagen seleccionada
-        selectedImgFavorite.push(imgAdded);
-        console.log(selectedImgFavorite);
-           
+        selectedImgFavorite.push(imgAdded);       
     }
    
 }
@@ -119,7 +112,7 @@ async function uploadImg(){
         const img = document.createElement("img");
         const form = document.getElementById("upload-Img");
         const dataForm = new FormData(form);
-        console.log("archivo subido", dataForm.get("file"));
+        
         const response = await fetch(API_upload, {
             method: "POST",
             headers: {
@@ -129,11 +122,9 @@ async function uploadImg(){
             body: dataForm, 
         });
         const dataUpload = await response.json();
-        console.log("pudo subirla", dataUpload);
         img.id = dataUpload.id;
-        uploadImgSend[0] = img;
-        selectedImgFavorite.push(img);
-        console.log(uploadImgSend);
+        uploadImgSend[0] = img; //Guarda la etiqueta <img>
+        selectedImgFavorite.push(img);//Esto es necesario para evitar el error de leer valores undefined en saveFavorite()
         saveFavorite();
     }
     catch(e){
@@ -141,36 +132,42 @@ async function uploadImg(){
     }
 }
 
-document.getElementById("file").onchange = function (e) {
-    console.log("evento", e);
-    let reader = new FileReader();
-    reader.readAsDataURL(e.target.files[0]);
+//detección de evento al subir una imagen en el input del formulario
+document.getElementById("file").onchange = function (event) {
+   
+    let reader = new FileReader(); //instancia del objeto reader
+    reader.readAsDataURL(event.target.files[0]);//Una vez cargado el archivo, guardamos su url
+    //onload, este evento permite realizar unas acciones una vez el archivo cargue
     reader.onload = function(){
-       
-        let preview = document.getElementById("img-view-container"),
+        //Extraemos el elemento html donde se guardará la imagen
+        let preview = document.getElementById("img-view-container");
+        //Se crea la etiqueta <img> para guardar la imagen y se asigna una clase
         image = document.createElement("img");
         image.classList.add("img-view-container__img");
-        image.src = reader.result;
-        preview.innerHTML = "";
+        image.src = reader.result; //asignamos el url de la imagen subida
         preview.append(image);
     }
 
     
 };
 
+//Aquí se realiza el envió a la API de las imágenes que se guardarán en favoritos
 async function saveFavorite(){
   
     try{
+        //Se límita la cantidad de imágenes de gatos guardados a 6
         const replaceImg = document.querySelectorAll(".show-favorites-container article img");
+        const preview = document.getElementById("img-view-container");
+        const imgLoaded = document.querySelector(".img-view-container__img");
         if(replaceImg.length >= 6){
-            console.log("más de 6")
             span.innerText = "You can only save six cats";
         }
+        //Si hay espacio, entonce se hace el envío a la API
         else{
-           
-            if(selectedImgFavorite.length){
+            if(selectedImgFavorite.length){//Debe haber una imagen seleccionada
                 for (const item of data) {
-                    if((item.id === selectedImgFavorite[0].id)|| uploadImgSend[0] ){
+                    //En esta validación se previene un cambio malintencionado al id de la imagen desde el inspector de elementos
+                    if((item.id === selectedImgFavorite[0].id)|| uploadImgSend[0] ){//Se valida si hay una imagen subida o seleccionada
                         const response = await fetch(APIFavorite, {
                             method : "POST",
                             mode: "cors",
@@ -181,10 +178,8 @@ async function saveFavorite(){
                             body:JSON.stringify({image_id : selectedImgFavorite[0].id})
                         });
                         let dataSent = await response.json();
-                        uploadImgSend[0] = 0;
-                        console.log(dataSent);
-                        console.log(response);
-                        console.log("gato mandado a guardar", item);
+                        
+                        uploadImgSend[0] = 0; //esto pondrá en false la condición de arriba
                         span.innerText = dataSent.message;
                         
                     }         
@@ -192,6 +187,8 @@ async function saveFavorite(){
                 showFavorite(); 
                 //La imagen que se solicitó guardar en favoritos debe ser des-seleccionada y sacada de la lista
                 selectedImgFavorite[0].classList.toggle("show-random-container__img--selected");
+                //Removemos la imágen del menú de subir archivo
+                preview.removeChild(imgLoaded); 
                  
             }
             else{
@@ -203,64 +200,60 @@ async function saveFavorite(){
         console.log(e);
     }
 }
-//Aquí se consulta los gatos favoritos que fueron enviados al backend, el backend reconoce al usuario por su key
+
+//Aquí se consulta los gatos favoritos que fueron enviados al backend de la API, el backend reconoce al usuario por su key
 //de autenticación y guarda la información enviada por POST
 async function showFavorite(){
     try{
         const fragment = new DocumentFragment();
+        //Consulta a la API para traer las imágenes guardadas en favoritos
         const response = await fetch(APIFavorite, {
             method: "GET",
             headers: {
-                "X-API-KEY": "live_swlCiQ2zrjigeFch1ZiFXdEQyNIU7wWze8fQxpSLVPRKXHWktuQ9Y9Zq18yUQgRL", 
+                "X-API-KEY": API_key, 
             }
         });  
         let dataQuery = await response.json();
-        console.log("gatos traido para el show", dataQuery)
-
+        //Se valida si existen imágenes en la sección de favoritos
         if(favoriteSection.childNodes.length > 1){
             
             let replaceImg = document.querySelectorAll(".show-favorites-container article img");
             const article = document.querySelectorAll(".show-favorites-container article");
             const img = document.createElement("img");
             const newArticle = document.createElement("article");
-            newArticle.addEventListener("click", selectImgRandom);
-            //mostrar luego de eliminar un gato
+            newArticle.addEventListener("click", selectImgRandom); //Se aplica evento de selección por click a cada artículo
+            //Mostrar sección luego de eliminar la imagen de un gato
             replaceImg.forEach((img, index)=> {
                 
                 if(img.id === selectedImgFavorite[0].id){
-                    console.log("antes de eliminar", replaceImg);
-                    console.log("este es el gatoq ue eliminaste", replaceImg[index]);
-                    /* article[index].removeChild(replaceImg[index]); */
+                    
                     favoriteSection.removeChild(article[index]);  
                     replaceImg = document.querySelectorAll(".show-favorites-container article img");  
-                    console.log("Como quedó luego de eliminar", replaceImg);
+                    
                 }
             });
            
             selectedImgFavorite.shift(); 
-            //Mostrar al agregar un gato
+            //Mostrar sección luego de agregar imagen de un gato
             dataQuery.forEach((item, index) => {
                 
                 replaceImg[index] ? 
                 (
-                    //Si existe una etiqueta img en la posición dle index, entonces reemplazará la información de cada una 
+                    //Si existe una etiqueta img en la posición del index, entonces reemplazará la información de cada una 
                     replaceImg[index].src = item.image.url,
                     replaceImg[index].id = item.id    
                 )
                 :
                 (   
-                    //Si no existe otra etiqueta img en la posición del index, entonces creará agregará una nueva con
-                    //información del gato enviado a favoritos     
+                    //Si no existe otra etiqueta img en la posición del index, entonces creará una nueva 
                     img.src = item.image.url,
                     img.id = item.id,
                     newArticle.append(img),                
                     favoriteSection.append(newArticle)       
                 );
-                     
-
             });
         }
-         //Mostrar apenas cargue la página
+         //Mostrar apenas cargue la página estando la sección vacía
         else{
             //Se creará el botón de remove para agregarlo como hijo a la section contenedora de favoritos
             const favoriteSectionContainer = document.querySelector(".favorite-cats-container");
@@ -271,9 +264,9 @@ async function showFavorite(){
             btnRemove.onclick = () => deleteFavorite();
           
             for (const item of dataQuery) {
-                //Elemet creation           
+                //Element creation           
                 const article = document.createElement("article");
-                article.addEventListener("click", selectImgRandom);
+                article.addEventListener("click", selectImgRandom);//Se aplica evento de selección por click
                 const img = document.createElement("img");
                 //Add nodes and attributes
                 img.src = item.image.url;
@@ -281,7 +274,6 @@ async function showFavorite(){
                 article.appendChild(img);   
                 fragment.append(article);     
             }
-            console.log(fragment.children);
             favoriteSection.append(fragment);
             favoriteSectionContainer.appendChild(btnRemove);
         }  
@@ -320,8 +312,8 @@ async function deleteFavorite(){
         span.innerText = "error occurred "+e;
     }
 }
+//Las funciones a continuación abren y cierra el aside-menú de donde se carga una imagen
 function openUploadMenu(){
-    console.log("abre menu")
     const menu = document.querySelector(".upload-aside");
     menu.classList.toggle("button--disabled");
     const closeUploadMenu = document.querySelector(".close-menu");
@@ -331,7 +323,7 @@ function closeMenu(){
     const menu = document.querySelector(".upload-aside");
     menu.classList.toggle("button--disabled");
 }
-
+//Carga las imágenes de la sección random y la sección favorites
 showCatPicture()
 showFavorite();
 

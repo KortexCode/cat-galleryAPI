@@ -16,12 +16,20 @@ const uploadImgSend = []; //Guarda la imágen subida
 let data;
 
 /*API variables*/
-
 const API = "https://api.thecatapi.com/v1/images/search?limit=4";
 const APIFavorite = "https://api.thecatapi.com/v1/favourites";
 const APIFavoriteDelete = "https://api.thecatapi.com/v1/favourites/";
 const API_key ="live_swlCiQ2zrjigeFch1ZiFXdEQyNIU7wWze8fQxpSLVPRKXHWktuQ9Y9Zq18yUQgRL";
 const API_upload = "https://api.thecatapi.com/v1/images/upload";
+
+//Ejemplo con axios
+const apiAxio = axios.create({
+    baseURL:"https://api.thecatapi.com/v1",
+    headers: {
+        "X-API-KEY": "live_swlCiQ2zrjigeFch1ZiFXdEQyNIU7wWze8fQxpSLVPRKXHWktuQ9Y9Zq18yUQgRL",
+    }
+});
+
 
 //Aquí se muestran las imágenes de gatos consultados a la API
 async function showCatPicture(){
@@ -112,7 +120,7 @@ async function uploadImg(){
         const img = document.createElement("img");
         const form = document.getElementById("upload-Img");
         const dataForm = new FormData(form);
-        
+
         const response = await fetch(API_upload, {
             method: "POST",
             headers: {
@@ -168,7 +176,14 @@ async function saveFavorite(){
                 for (const item of data) {
                     //En esta validación se previene un cambio malintencionado al id de la imagen desde el inspector de elementos
                     if((item.id === selectedImgFavorite[0].id)|| uploadImgSend[0] ){//Se valida si hay una imagen subida o seleccionada
-                        const response = await fetch(APIFavorite, {
+                      
+                        //Ejempl con Axio
+                        /*  const res = await apiAxio.post("/favourites", {
+                        image_id: selectedImgFavorite[0].id,
+                       })
+                       console.log(res); */
+
+                         const response = await fetch(APIFavorite, {
                             method : "POST",
                             mode: "cors",
                             headers:{
@@ -178,7 +193,7 @@ async function saveFavorite(){
                             body:JSON.stringify({image_id : selectedImgFavorite[0].id})
                         });
                         let dataSent = await response.json();
-                        
+
                         uploadImgSend[0] = 0; //esto pondrá en false la condición de arriba
                         span.innerText = dataSent.message;
                         
@@ -188,7 +203,10 @@ async function saveFavorite(){
                 //La imagen que se solicitó guardar en favoritos debe ser des-seleccionada y sacada de la lista
                 selectedImgFavorite[0].classList.toggle("show-random-container__img--selected");
                 //Removemos la imágen del menú de subir archivo
-                preview.removeChild(imgLoaded); 
+                if(imgLoaded){
+                    preview.removeChild(imgLoaded); 
+                }
+               
                  
             }
             else{

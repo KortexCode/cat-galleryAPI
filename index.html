@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- CSS -->
+    <link rel="stylesheet" href="./main.css">
+    <!-- FONTS -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Abyssinica+SIL&display=swap" rel="stylesheet">
+   <!--Axio-->
+   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <!-- JAVASCRIPT -->
+    <script src="./apiRest.js" defer></script>
+
+    <title>Cats</title>
+</head>
+<body>
+    <h1>Cat Images Generator</h1>
+    <aside class="upload-aside button--disabled">
+        <p>Choose a image to upload <span class="close-menu">(X)</span></p>
+        
+        <div class="upload-aside__content">
+            <form  id="upload-Img">
+            
+                <input id="file" type="file" name="file" height="30px">
+                <button type="button" onclick="uploadImg()">Upload image</button>
+                      
+            </form>
+            <div id="img-view-container"></div>  
+        </div>       
+    </aside>
+    <span id="error"></span>
+    <div class="query-button-container">
+        <button class="query-button">Search other cats</button>
+    </div>
+    <section class="random-cats-container">
+        <div class="show-random-container">
+
+        </div>
+        <div class="random-cats-container__buttons">
+            <button id="saveFavorite" class="random-cats-container__button button--disabled">Save to favorites</button>
+            <button id="upload-button" class="random-cats-container__button button--disabled">Upload a image</button>
+        </div>
+    </section>
+   
+    <section class="favorite-cats-container">
+        <h2 class="favorite-cats-container__title">Favorite Cats</h2>
+        <div class="show-favorites-container">
+
+        </div>
+    </section>
+      
+</body>
+</html>
